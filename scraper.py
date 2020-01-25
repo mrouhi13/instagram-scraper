@@ -6,17 +6,17 @@ __date__ = '2020.01.24'
 import getopt
 import sys
 
-from scraper.instagram import Instagram
+from scrapers.instagram import Instagram
 
 
 def main(argv):
     target_username = None
     post_limit = None
-    help_text = '''\nUsage:  scraper [OPTIONS]
+    help_text = '''\nUsage:  scrapers [OPTIONS]
     \nOptions:
     \n\t-t, --target\tTargeted username for scraping
     \n\t-l, --limit\tNumber of posts for scraping from the last post
-    \nRun \'scraper --help\' for more information.\n'''
+    \nRun \'scrapers --help\' for more information.\n'''
 
     try:
         opts, args = getopt.getopt(argv, 'ht:l:', ['target=', 'limit='])
