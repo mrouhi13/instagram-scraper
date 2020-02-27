@@ -6,8 +6,9 @@ from urllib import request
 from urllib.parse import urljoin
 
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.keys import Keys
+
 from utils import generate_file_name
 
 
@@ -154,9 +155,13 @@ class Instagram:
         the given post id."""
         photos_url = []
         self.open_target_url(f'p/{post_id}')
-        photo_element = self.driver.find_element_by_class_name(
-            self.photo_class_name)
-        photos_url.append(photo_element.get_attribute('src'))
+
+        try:
+            photo_element = self.driver.find_element_by_class_name(
+                self.photo_class_name)
+            photos_url.append(photo_element.get_attribute('src'))
+        except NoSuchElementException:
+            pass
 
         return photos_url
 
@@ -230,21 +235,25 @@ class Instagram:
 
             caption, metadata = self.get_post_caption(post_id)
             photos_url = self.get_post_photos(post_id)
-            files = self.download_photo(photos_url,
-                                        metadata.get('character_name',
-                                                     post_id))
-            metadata.update({'files': files})
-            post_object = {
-                'post_id': post_id,
-                'post_url': self.target_url,
-                'photos_url': photos_url,
-                'caption': caption,
-                'metadata': metadata
-            }
-            posts.append(post_object)
-            sys.stdout.flush()
+
+            if photos_url:
+                files = self.download_photo(photos_url,
+                                            metadata.get('character_name',
+                                                         post_id))
+                metadata.update({'files': files})
+                post_object = {
+                    'post_id': post_id,
+                    'post_url': self.target_url,
+                    'photos_url': photos_url,
+                    'caption': caption,
+                    'metadata': metadata
+                }
+                posts.append(post_object)
+                sys.stdout.flush()
 
         with open(os.path.join(self.download_dir, 'data.json'), 'w') as fp:
             json.dump(posts, fp)
 
-        sys.stdout.write(f'\n\n{posts_count} post(s) cloned successfully.\n\n')
+        fetched_count = len(posts)
+        sys.stdout.write(
+            f'\n\n{fetched_count} post(s) cloned successfully.\n\n')
