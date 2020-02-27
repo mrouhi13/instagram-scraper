@@ -6,10 +6,10 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-selenium = "*"
-pandas = "*"
-xlrd = "*"
-openpyxl = "*"
+selenium = "==3.141.0"
+pandas = "==0.25.3"
+xlrd = "==1.2.0"
+openpyxl = "==3.0.2"
 
 [requires]
 python_version = "3.7"
